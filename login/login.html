@@ -23,8 +23,9 @@
                 <hr/>
             </div>
             <button type="submit">Login</button>
-           
         </form>
+        <hr>
+        <a href="../signup/signup.html"><button>signUp</button></a>
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.4.1/axios.min.js"></script>
      <script>
@@ -41,6 +42,7 @@
               .then((response)=>{
                  if(response.status==201){
                     alert(response.data.message)
+                    window.location.href="../expense/expense.html"
                  }
               })
               .catch((error)=>{
