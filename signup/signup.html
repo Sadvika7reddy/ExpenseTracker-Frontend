@@ -51,7 +51,7 @@
                 }
               })
               .catch((err)=>{
-                console.log(err)
+                document.innerHtml=`<p>${err.error}</p>`
               })
           }
      </script>
