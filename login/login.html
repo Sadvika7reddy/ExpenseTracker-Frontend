@@ -42,12 +42,9 @@
                  if(response.status==201){
                     alert(response.data.message)
                  }
-                 else{
-                  throw new Error(response.data.error)
-                 }
               })
               .catch((error)=>{
-                document.body.innerHTML+=`<p>${error.message}</p>`
+                //document.body.innerHTML+=`<p>${JSON.stringify(error.message)}</p>`
               })
           }
      </script>
