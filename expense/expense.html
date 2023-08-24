@@ -53,9 +53,10 @@
                     category,
                     description
                 }
-                axios.post("http://localhost:3000/expense/add-expenses",obj)
+                const token=localStorage.getItem('token')
+                axios.post("http://localhost:3000/expense/add-expenses",obj,{headers:{'Authorization':token}})
                 .then((response)=>{
-                    localStorage.setItem(response.data.expenseDetails.id, JSON.stringify(response.data.expenseDetails))
+                    //localStorage.setItem(response.data.expenseDetails.id, JSON.stringify(response.data.expenseDetails))
                     showNewUserOnScreen(response.data.expenseDetails)
                 })
                 .catch((err)=>{
@@ -63,19 +64,15 @@
                 })
             }
 
-            window.addEventListener("DOMContentLoaded", () => {
-                 axios.get("http://localhost:3000/expense/get-expenses")
-                 .then((response)=>{
-                const localStorageObj = localStorage
-                const localstoragekeys  = Object.keys(localStorageObj)
-                for(var i =0; i< localstoragekeys.length; i++){
-                    const key = localstoragekeys[i]
-                    const userDetailsString = localStorageObj[key];
-                    const userDetailsObj = JSON.parse(userDetailsString);
-                    showNewUserOnScreen(userDetailsObj)
-                }
-            }
-                 )
+            
+            window.addEventListener("DOMContentLoaded",()=>{
+                const token=localStorage.getItem('token')
+                axios.get("http://localhost:3000/expense/get-expenses",{headers:{'Authorization':token}})
+                .then((response)=>{
+                    response.data.allExpense.forEach((expense)=>{
+                        showNewUserOnScreen(expense)
+                    })
+                })
             })
 
             function showNewUserOnScreen(user){
@@ -111,9 +108,10 @@
 
             
             function deleteUser(userId){
-                axios.delete(`http://localhost:3000/expense/delete-expenses/${userId}`)
+                const token=localStorage.getItem('token')
+                axios.delete(`http://localhost:3000/expense/delete-expenses/${userId}`,{headers:{'Authorization':token}})
                 .then((response)=>{
-                    localStorage.removeItem(userId);
+                 // localStorage.removeItem(userId);
                     removeUserFromScreen(userId); 
                 })
 
