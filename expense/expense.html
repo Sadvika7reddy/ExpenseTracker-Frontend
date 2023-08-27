@@ -115,7 +115,7 @@
                         <td>${user.description}</td>
                     </tr>
                         </table>
-                                        <button onclick=deleteUser('${user.id}') style="background-color:Tomato;">X</button>
+                                        <button onclick=deleteUser('${user.id}','${user.amount}') style="background-color:Tomato;">X</button>
                                         <button onclick=editUserDetails('${user.category}','${user.amount}','${user.description}','${user.id}') style="background-color:yellow;">Edit</button>
                                      </li>`
 
@@ -127,14 +127,14 @@
                 document.getElementById('amount').value = amount;
                 document.getElementById('description').value =description;
                 
-                    deleteUser(userId) 
+                    deleteUser(userId,amount) 
             }
 
 
             
-            function deleteUser(userId){
+            function deleteUser(userId,amount){
                 const token=localStorage.getItem('token')
-                axios.delete(`http://localhost:3000/expense/delete-expenses/${userId}`,{headers:{'Authorization':token}})
+                axios.delete(`http://localhost:3000/expense/delete-expenses/${userId}/${amount}`,{headers:{'Authorization':token}})
                 .then((response)=>{
                  // localStorage.removeItem(userId);
                     removeUserFromScreen(userId); 
