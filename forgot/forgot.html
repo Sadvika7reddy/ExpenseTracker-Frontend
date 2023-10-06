@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- <link rel="stylesheet" href="login.css" /> -->
+    <title>Forgot Password</title>
+  </head>
+  <body>
+    <form>
+        <label>Email</label>
+        <input type="email" id="email"/>
+        <button type="submit">Submit</button>
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.4.1/axios.min.js"></script>
+     <script>
+          function submitHandler(event){
+            event.preventDefault();
+           
+            const email=event.target.email.value;
+            
+            const obj = {
+                    email,
+                    
+                }
+              axios.use("http://localhost:3000/password/forgotpassword",obj)
+              .then((response)=>{
+                 
+              })
+              .catch((error)=>{
+                //document.body.innerHTML+=`<p>${JSON.stringify(error.message)}</p>`
+                             })
+          }
+     </script>
+    
+  </body>
+ </html> 
+ 
