@@ -39,6 +39,7 @@
             <button>Add Expences</button>
         </form>
     </section>
+    <button  onclick="download()" id="download">Download File</button>
     <button id="rzp-button1">Add Premium</button>
     <button id="leader" type="submit">showLeaderboaed</button>
     <p id="message"></p>
@@ -191,6 +192,25 @@
                      </table>   
                     </li>`
                     parentNode.innerHTML=parentNode.innerHTML+childHTML;
+            }
+
+            async function download(){
+                try{
+                    let response=await axios.get('http://localhost:3000/user/expenseFile',{headers:{'Authorization':token}})
+                if(response.status==201){
+                   let a=document.createElement('a')
+                    a.href=response.data.fileUrl
+                    a.download = 'myexpense.csv';
+                    a.click();
+                }
+                else{
+                    throw new Error('file doesnt exit')
+                }
+                }
+                catch(err){
+                    
+                }
+              
             }
 
         </script>

@@ -8,7 +8,7 @@
     <title>Forgot Password</title>
   </head>
   <body>
-    <form>
+    <form onsubmit="submitHandler(event)">
         <label>Email</label>
         <input type="email" id="email"/>
         <button type="submit">Submit</button>
@@ -18,13 +18,13 @@
           function submitHandler(event){
             event.preventDefault();
            
-            const email=event.target.email.value;
+            const form = new FormData(event.target);
             
             const obj = {
-                    email,
+                    email:form.get("email")
                     
                 }
-              axios.use("http://localhost:3000/password/forgotpassword",obj)
+              axios.post("http://localhost:3000/password/forgotpassword",obj)
               .then((response)=>{
                  
               })
