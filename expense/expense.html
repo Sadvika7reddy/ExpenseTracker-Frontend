@@ -45,6 +45,7 @@
     <p id="message"></p>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
         <ul id='listOfUsers'></ul>
+        <ul id="listOfFiles"></ul>
         <ul id="listOfpremium">
             <h4>LeaderBoard</h4>
         </ul> 
@@ -196,21 +197,40 @@
 
             async function download(){
                 try{
-                    let response=await axios.get('http://localhost:3000/user/expenseFile',{headers:{'Authorization':token}})
+                    const token=localStorage.getItem('token')
+                    let response=await axios.get('http://localhost:3000/expense/download',{headers:{'Authorization':token}})
                 if(response.status==201){
                    let a=document.createElement('a')
-                    a.href=response.data.fileUrl
+                    a.href=response.data.fileURL
                     a.download = 'myexpense.csv';
                     a.click();
+                   response.data.allLinks.forEach((files)=>{
+                      showOnScreen(files)
+                   })
                 }
                 else{
                     throw new Error('file doesnt exit')
                 }
                 }
                 catch(err){
-                    
+                    console.log(err)
                 }
               
+            }
+
+            function showOnScreen(files){
+                const parentNode = document.getElementById('listOfFiles');
+                const childHTML = `<li id=${files.userId}> <table>
+                    <tr>
+                        <td>${files.link}</td>
+                        
+                    </tr>
+                        </table>
+                                                                         
+                      
+                        </li>`
+
+                parentNode.innerHTML = parentNode.innerHTML + childHTML;
             }
 
         </script>
