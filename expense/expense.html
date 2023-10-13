@@ -39,6 +39,11 @@
             <button>Add Expences</button>
         </form>
     </section>
+    <form>
+        <label>Item Per Page</label>
+        <input type="number" min="1" max="5" id="itemsPerPage"/>
+        <button onclick="setItemsPerPage()">Set</button>
+    </form>
     <button  onclick="download()" id="download">Download File</button>
     <button id="rzp-button1">Add Premium</button>
     <button id="leader" type="submit">showLeaderboaed</button>
@@ -46,6 +51,7 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script> 
         <ul id='listOfUsers'></ul>
         <ul id="listOfFiles"></ul>
+        <ul id="pagination"></ul>
         <ul id="listOfpremium">
             <h4>LeaderBoard</h4>
         </ul> 
@@ -93,35 +99,82 @@
                     if(isAdmin){
                         showPremiumUser();
                     }
-
-                axios.get("http://localhost:3000/expense/get-expenses",{headers:{'Authorization':token}})
+                 const page=1;
+                 const itemsPerPage=localStorage.getItem('itemsPerPage')
+                axios.get(`http://localhost:3000/expense/pagination?page=${page}&itemsPerPage=${itemsPerPage}`,{headers:{'Authorization':token}})
                 .then((response)=>{
-                    response.data.allExpense.forEach((expense)=>{
-                        showNewUserOnScreen(expense)
-                    })
+                    // response.data.files.forEach((expense)=>{
+                    //     showNewUserOnScreen(expense)
+                    // })
+                    showPagination(response.data)
                 })
             })
 
-            function showNewUserOnScreen(user){
-                document.getElementById('category').value = '';
-                document.getElementById('amount').value = '';
-                document.getElementById('description').value ='';
-                if(localStorage.getItem(user.category) !== null){
-                    removeUserFromScreen(user.category)
+            function showPagination({
+                currentPage,
+                hasNextPage,
+                nextPage,
+                hasPreviousPage,
+                previousPage,
+                lastPage
+            }){
+                pagination.innerHTML='';
+                if(hasPreviousPage){
+                   const btn2=document.createElement('button')
+                   btn2.innerHTML=previousPage;
+                   btn2.addEventListener('click',()=>getProducts(previousPage))
+                   pagination.appendChild((btn2))
                 }
-                const parentNode = document.getElementById('listOfUsers');
-                const childHTML = `<li id=${user.id}> <table>
+                    const btn1=document.createElement('button')
+                   btn1.innerHTML=currentPage;
+                   btn1.addEventListener('click',()=>getProducts(currentPage))
+                   pagination.appendChild((btn1))
+                   if(hasNextPage){
+                   const btn3=document.createElement('button')
+                   btn3.innerHTML=nextPage;
+                   btn3.addEventListener('click',()=>getProducts(nextPage))
+                   pagination.appendChild((btn3))
+                }
+                 
+            }
+
+            function getProducts(page){
+                const token=localStorage.getItem('token')
+                const itemsPerPage=localStorage.getItem('itemsPerPage')
+                axios.get(`http://localhost:3000/expense/pagination?page=${page}&itemsPerPage=${itemsPerPage}`,{headers:{'Authorization':token}})
+                .then((response)=>{
+                    
+                        showNewUserOnScreen( response.data.files)
+                
+                    showPagination(response.data)
+                })
+            }
+
+            function setItemsPerPage(){
+             localStorage.setItem('itemsPerPage',document.getElementById('itemsPerPage').value);
+              
+            }
+
+            function showNewUserOnScreen(user){
+                listOfUsers.innerHTML = '';
+                user.forEach((product)=>{
+                    const prod=document.createElement('div')
+                    prod.className='product';
+                    prod.id=`${product.id}`
+                    prod.innerHTML= `<li id=${product.id}> <table>
                     <tr>
-                        <td>${user.amount}</td>
-                        <td>${user.category}</td>
-                        <td>${user.description}</td>
+                        <td>${product.amount}</td>
+                        <td>${product.category}</td>
+                        <td>${product.description}</td>
                     </tr>
                         </table>
-                                        <button onclick=deleteUser('${user.id}','${user.amount}') style="background-color:Tomato;">X</button>
-                                        <button onclick=editUserDetails('${user.category}','${user.amount}','${user.description}','${user.id}') style="background-color:yellow;">Edit</button>
+                                        <button onclick=deleteUser('${product.id}','${product.amount}') style="background-color:Tomato;">X</button>
+                                        <button onclick=editUserDetails('${product.category}','${product.amount}','${product.description}','${product.id}') style="background-color:yellow;">Edit</button>
                                      </li>`
 
-                parentNode.innerHTML = parentNode.innerHTML + childHTML;
+                        listOfUsers.appendChild(prod)
+                })
+               
             }
             function editUserDetails(category, amount, description,userId){
 
@@ -167,7 +220,7 @@
                         document.getElementById('message').innerHTML='You are premium user'
                     }
                 }
-                const rzp1=new Razorpay(options)
+                const rzp1=new Razorpay(options) 
                 console.log(options.handler())
                 rzp1.open();
                 e.preventDefault();
